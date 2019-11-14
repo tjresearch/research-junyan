@@ -20,17 +20,14 @@ class Spacecraft
      double px, py, pz;
     
      Spacecraft() { }
-    Spacecraft(double m, double ai, double aj, double ak, double vi, double vj, double vk, double pi, double pj, double pk){
-        mass = m; 
-        ax = ai;
-        
+    Spacecraft(double vi, double vj, double vk, double pi, double pj, double pk){
+        vx = vi;
+        vy = vj;
+        vz = vk;
+        px = pi;
+        py = pj;
+        pz = pk;
     
-        
-        /*
-        if(i < 1){
-            peri = peri + ascendn;
-        }
-        */
     }
     };
        double vk2(double a, double r, double v, double t){
@@ -59,6 +56,7 @@ class Planet
      double range, rascend, declin, ta, E, ma; //changing variables
      double ascendn, peri, inclin, axis, ec, motion, ima; //constants
      double px, py, pz;
+     double vx, vy, vz;
      double d2r = M_PI / 180;
      Planet() { }
     Planet(double m, double o, double i, double r, double ra, double dec, double an, double p, double period, double e, double a){
@@ -109,6 +107,18 @@ class Planet
              pz = range * (sin(ta + peri) * sin(inclin));
              return pz;
     }
+    
+    double getVx(){
+            return vx;
+    }
+    double getVy(){
+            return vy;
+    }
+    double getVz(){
+            return vz;
+    }
+    
+
     void setMA(double d){
         ma = d;
     }
@@ -169,7 +179,7 @@ class Planet
 
 };
     
-void solarsystem()
+void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
 {
     //int year, mon, day, hr, minute;
     double sec;
@@ -182,16 +192,21 @@ void solarsystem()
      planets[3] = Planet(0.642e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Mars
       planets[4] = Planet(1898e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Jupiter
        planets[5] = Planet(568e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Saturn
-     planets[3] = Planet(86.8e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231);//Uranus
-      planets[3] = Planet(102e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Neptune
+     //planets[3] = Planet(86.8e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231);//Uranus
+      //planets[3] = Planet(102e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Neptune
     planets[7] = Planet(0.0146e24, 1, 17.14175, 33.8684306892170, 130.2016, 6.9345, 110.30347, 113.76329, 90560, 0.24880766,39.48168677); //Pluto
     // planets[4] = Planet(3.302e23, 1, 7.0, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, .205,0.38709893); //Jupiter
         double day = 0;
-        double px, py, pz;
+        s = Spacecraft(planets[p].getVx() + 1 * sin(a1) * cos(a2), planets[p].getVy() + 1 * sin(a1) * sin(a2), planets[p].getVz() + 1 * cos(a1), 
+        planets[p].getX() + 1 * sin(a1) * cos(a2), planets[p].getY() + 1 * sin(a1) * sin(a2), planets[p].getZ() + 1 * cos(a1));
        // cout << acos((1 - .46669 / .387) / .205) - .205 * sin(acos((1 - .46669 / .387 ) / .205));
     for(double time = juliandate; time <= 88 + juliandate; time += .00069444){
         day += .00069444;
+        
         for(int n = 0; n < 1; n++){
+            double px = planets[n].getX();
+                 double py = planets[n].getY();
+                double pz = planets[n].getZ();
             planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
             planets[n].eccentricAnomaly();
             planets[n].trueAnomaly();
@@ -202,7 +217,7 @@ void solarsystem()
             double vy = planets[n].getY() - py;
             double vz = planets[n].getZ() - pz;
                 px = planets[n].getX();
-                py = planets[n].getY();
+                 py = planets[n].getY();
                 pz = planets[n].getZ();
             cout.precision(10);
            if(day >= 1){
@@ -219,10 +234,12 @@ void solarsystem()
  
 }
 int main(){
-    Spacecraft icarius;
+    Spacecraft icarus;
+    int i = 0;
     for(double theta = 0; theta < 2 * M_PI; theta+= M_PI / 180){
         for(double phi = 0; phi < M_PI; phi+= M_PI / 180){
-            solarsystem();
+
+            solarsystem(icarus, theta, phi, i);
         }
     }
     return 0;
