@@ -29,6 +29,52 @@ class Spacecraft
         pz = pk;
     
     }
+     double getX(){
+            
+             return px;
+    }
+    double getY(){
+            
+             return py;
+    }
+    double getZ(){
+             return pz;
+    }
+    
+
+     void setX(double x){
+             px = x;
+    }
+    void setY(double y){
+            
+              py = y;
+    }
+    void setZ(double z){
+           
+             pz = z;
+    }
+    
+    double getVx(){
+            return vx;
+    }
+    double getVy(){
+            return vy;
+    }
+    double getVz(){
+            return vz;
+    }
+    
+    void setVx(double x){
+             vx = x;
+    }
+    void setVy(double y){
+            
+              vy = y;
+    }
+    void setVz(double z){
+           
+             vz = z;
+    }
     };
        double vk2(double a, double r, double v, double t){
            return a * (r + v * t / 2);
@@ -198,11 +244,14 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
     // planets[4] = Planet(3.302e23, 1, 7.0, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, .205,0.38709893); //Jupiter
         double day = 0;
         s = Spacecraft(planets[p].getVx() + 1 * sin(a1) * cos(a2), planets[p].getVy() + 1 * sin(a1) * sin(a2), planets[p].getVz() + 1 * cos(a1), 
-        planets[p].getX() + 1 * sin(a1) * cos(a2), planets[p].getY() + 1 * sin(a1) * sin(a2), planets[p].getZ() + 1 * cos(a1));
+        planets[p].getX() + planets[p].getOr() * sin(a1) * cos(a2), planets[p].getY() + planets[p].getOr() * sin(a1) * sin(a2), planets[p].getZ() + 1 * cos(a1));
        // cout << acos((1 - .46669 / .387) / .205) - .205 * sin(acos((1 - .46669 / .387 ) / .205));
     for(double time = juliandate; time <= 88 + juliandate; time += .00069444){
         day += .00069444;
-        
+        double spr;
+        s.setX(s.getVx() * .00069444 + s.getX());
+        s.setY(s.getVy() * .00069444 + s.getY());
+        s.setZ(s.getVz() * .00069444 + s.getZ());
         for(int n = 0; n < 1; n++){
             double px = planets[n].getX();
                  double py = planets[n].getY();
@@ -229,7 +278,8 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
                 
                 day = 0;
                            }    
-        }      
+        }
+        
     }
  
 }
