@@ -15,6 +15,7 @@ class Spacecraft
 {
     public:
      double mass;
+     double row, theta, phi;
      double ax, ay, az;
      double vx, vy, vz;
      double px, py, pz;
@@ -27,7 +28,23 @@ class Spacecraft
         px = pi;
         py = pj;
         pz = pk;
-    
+        row = sqrt(pow(pi, 2) + pow(pj, 2) + pow(pk, 2));
+        theta = atan(pj / pi);
+        phi = atan(sqrt(pow(pi, 2) + pow(pj, 2)) / pk );
+    }
+    double getRow(){
+        return row;
+    }
+    double getTheta(){
+        return theta;
+    }
+    double getPhi(){
+        return phi;
+    }
+    void setSphere(double pi, double pj, double pk){
+        row = sqrt(pow(pi, 2) + pow(pj, 2) + pow(pk, 2));
+        theta = atan(pj / pi);
+        phi = atan(sqrt(pow(pi, 2) + pow(pj, 2)) / pk );
     }
      double getX(){
             
@@ -229,18 +246,16 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
 {
     //int year, mon, day, hr, minute;
     double sec;
-    
-    //planetsAU[3] = 1.66602003028769;
      Planet planets [10];
      planets[0] = Planet(3.302e23, 1, 7.00487, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, 0.20563069,0.38709893); //Mercury
-     planets[1] = Planet(4.87e24, 1, 7.0, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, .205,0.38709893); //Venus
-     planets[2] = Planet(5.972e24, 1, 0.00005, 1.01014351904246, 335.1159, 0.0009, -11.26064, 114.20783, 365.2, 0.01671022, 1); //Earth
-     planets[3] = Planet(0.642e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Mars
-      planets[4] = Planet(1898e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Jupiter
-       planets[5] = Planet(568e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Saturn
-      //planets[3] = Planet(86.8e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231);//Uranus
-      //planets[3] = Planet(102e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Neptune
-    planets[7] = Planet(0.0146e24, 1, 17.14175, 33.8684306892170, 130.2016, 6.9345, 110.30347, 113.76329, 90560, 0.24880766,39.48168677); //Pluto
+    // planets[1] = Planet(4.87e24, 1, 7.0, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, .205,0.38709893); //Venus
+   //  planets[2] = Planet(5.972e24, 1, 0.00005, 1.01014351904246, 335.1159, 0.0009, -11.26064, 114.20783, 365.2, 0.01671022, 1); //Earth
+   //  planets[3] = Planet(0.642e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Mars
+   //   planets[4] = Planet(1898e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Jupiter
+    //   planets[5] = Planet(568e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Saturn
+    //  planets[6] = Planet(86.8e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231);//Uranus
+    //  planets[7] = Planet(102e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Neptune
+// planets[8] = Planet(0.0146e24, 1, 17.14175, 33.8684306892170, 130.2016, 6.9345, 110.30347, 113.76329, 90560, 0.24880766,39.48168677); //Pluto
     // planets[4] = Planet(3.302e23, 1, 7.0, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, .205,0.38709893); //Jupiter
         double day = 0;
         s = Spacecraft(planets[p].getVx() + 1 * sin(a1) * cos(a2), planets[p].getVy() + 1 * sin(a1) * sin(a2), planets[p].getVz() + 1 * cos(a1), 
@@ -249,9 +264,9 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
     for(double time = juliandate; time <= 88 + juliandate; time += .00069444){
         day += .00069444;
         double spr;
-        s.setX(s.getVx() * .00069444 + s.getX());
-        s.setY(s.getVy() * .00069444 + s.getY());
-        s.setZ(s.getVz() * .00069444 + s.getZ());
+        s.setX(rf(1, s.getX(), s.getVx(), .00069444));
+        s.setY(rf(1, s.getY(), s.getVy(), .00069444));
+        s.setZ(rf(1, s.getZ(), s.getVz(), .00069444));
         for(int n = 0; n < 1; n++){
             double px = planets[n].getX();
                  double py = planets[n].getY();
@@ -279,7 +294,10 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
                 day = 0;
                            }    
         }
-        
+        double grav = 6.67e-11 * 1.989e30 / pow(s.getRow(), 2) ;
+       s.setVx(vf(1 * sin(s.getPhi()) * cos(s.getTheta()), s.getX(), s.getVx(), .00069444));
+        s.setVy(vf(1 * sin(s.getPhi()) * sin(s.getTheta()), s.getY(), s.getVy(), .00069444));
+        s.setVz(vf(1 * cos(s.getPhi()), s.getZ(), s.getVz(), .00069444));
     }
  
 }
