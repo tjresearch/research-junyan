@@ -7,6 +7,10 @@
 #include <vector>
 #include <string>
 #include <cmath>
+//initial velocity of spacecraft 0.00645468 AU / day
+//earth's orbital radius 6556145.59 meters
+//orbital radius is where g field is 9.2672 m/s^2
+// 1 AU = 1.496e+11 m
 using namespace std;
 double juliandate = 2458724.5; //for august 29
 double timepast;
@@ -260,7 +264,7 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
 // planets[8] = Planet(0.0146e24, 1, 17.14175, 33.8684306892170, 130.2016, 6.9345, 110.30347, 113.76329, 90560, 0.24880766,39.48168677); //Pluto
     // planets[4] = Planet(3.302e23, 1, 7.0, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, .205,0.38709893); //Jupiter
         double day = 0;
-        s = Spacecraft(planets[p].getVx() + 1 * sin(a1) * cos(a2), planets[p].getVy() + 1 * sin(a1) * sin(a2), planets[p].getVz() + 1 * cos(a1), 
+        s = Spacecraft(planets[p].getVx() + 0.00645468 * sin(a1) * cos(a2), planets[p].getVy() + 0.00645468 * sin(a1) * sin(a2), planets[p].getVz() + 0.00645468 * cos(a1), 
         planets[p].getX() + planets[p].getOr() * sin(a1) * cos(a2), planets[p].getY() + planets[p].getOr() * sin(a1) * sin(a2), planets[p].getZ() + 1 * cos(a1));
        // cout << acos((1 - .46669 / .387) / .205) - .205 * sin(acos((1 - .46669 / .387 ) / .205));
     for(double time = juliandate; time <= 88 + juliandate; time += .00069444){
@@ -270,7 +274,7 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
         s.setY(rf(1, s.getY(), s.getVy(), .00069444));
         s.setZ(rf(1, s.getZ(), s.getVz(), .00069444));
         s.setSphere(s.getX(), s.getY(), s.getZ());
-        cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
+       // cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
         for(int n = 0; n < 1; n++){
             double px = planets[n].getX();
                  double py = planets[n].getY();
@@ -294,20 +298,20 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
                 cout << "range: " << range << " ";
                 cout << "right Ascension: " << rascend << " ";
                 cout << "declination: " << declin << "\n";
-                
+                cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
                 day = 0;
                            }    
         }
-        double gravsun = 6.67e-11 * 1.989e30 / pow(s.getRow(), 2) ;
-        double gravmer = 6.67e-11 * 1.989e30 / pow(dist(s, planets[0]), 2) ;
+        double gravsun = 6.67e-11 * 1.989e30 / pow(s.getRow() * 1.496e+11, 2) ;
+        double gravmer = 6.67e-11 * 1.989e30 / pow(dist(s, planets[0]) * 1.496e+11, 2) ;
         double phi = acos((s.getZ() - planets[0].getZ()) / dist(s, planets[0]) );
         double theta = asin((s.getZ() - planets[0].getZ()) / dist(s, planets[0]));
-       s.setVx(vf(gravsun * sin(s.getPhi()) * cos(s.getTheta()), s.getX(), s.getVx(), .00069444));
-        s.setVy(vf(gravsun * sin(s.getPhi()) * sin(s.getTheta()), s.getY(), s.getVy(), .00069444));
-        s.setVz(vf(gravsun * cos(s.getPhi()), s.getZ(), s.getVz(), .00069444));
-         s.setVx(vf(gravmer * sin(phi) * cos(theta), s.getX(), s.getVx(), .00069444));
-        s.setVy(vf(gravmer * sin(phi) * sin(theta), s.getY(), s.getVy(), .00069444));
-        s.setVz(vf(gravmer * cos(phi), s.getZ(), s.getVz(), .00069444));
+       s.setVx(vf(gravsun / 1.496e+11 * sin(s.getPhi()) * cos(s.getTheta()), s.getX(), s.getVx(), .00069444));
+        s.setVy(vf(gravsun / 1.496e+11 * sin(s.getPhi()) * sin(s.getTheta()), s.getY(), s.getVy(), .00069444));
+        s.setVz(vf(gravsun / 1.496e+11 * cos(s.getPhi()), s.getZ(), s.getVz(), .00069444));
+         s.setVx(vf(gravmer / 1.496e+11 * sin(phi) * cos(theta), s.getX(), s.getVx(), .00069444));
+        s.setVy(vf(gravmer / 1.496e+11 * sin(phi) * sin(theta), s.getY(), s.getVy(), .00069444));
+        s.setVz(vf(gravmer / 1.496e+11 * cos(phi), s.getZ(), s.getVz(), .00069444));
     }
  
 }
