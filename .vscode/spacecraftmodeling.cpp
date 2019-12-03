@@ -253,7 +253,7 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
     //int year, mon, day, hr, minute;
     double sec;
      Planet planets [10];
-     planets[0] = Planet(3.302e23, 1, 7.00487, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, 0.20563069,0.38709893); //Mercury
+     planets[0] = Planet(3.302e23, 1e-7, 7.00487, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, 0.20563069,0.38709893); //Mercury
     // planets[1] = Planet(4.87e24, 1, 7.0, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, .205,0.38709893); //Venus
    //  planets[2] = Planet(5.972e24, 1, 0.00005, 1.01014351904246, 335.1159, 0.0009, -11.26064, 114.20783, 365.2, 0.01671022, 1); //Earth
    //  planets[3] = Planet(0.642e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Mars
@@ -265,7 +265,7 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
     // planets[4] = Planet(3.302e23, 1, 7.0, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, .205,0.38709893); //Jupiter
         double day = 0;
         s = Spacecraft(planets[p].getVx() + 0.00645468 * sin(a1) * cos(a2), planets[p].getVy() + 0.00645468 * sin(a1) * sin(a2), planets[p].getVz() + 0.00645468 * cos(a1), 
-        planets[p].getX() + planets[p].getOr() * sin(a1) * cos(a2), planets[p].getY() + planets[p].getOr() * sin(a1) * sin(a2), planets[p].getZ() + 1 * cos(a1));
+        planets[p].getX() + planets[p].getOr() * sin(a1) * cos(a2), planets[p].getY() + planets[p].getOr() * sin(a1) * sin(a2), planets[p].getZ() + planets[p].getOr() * cos(a1));
        // cout << acos((1 - .46669 / .387) / .205) - .205 * sin(acos((1 - .46669 / .387 ) / .205));
     for(double time = juliandate; time <= 88 + juliandate; time += .00069444){
         day += .00069444;
