@@ -248,7 +248,7 @@ class Planet
     double dist(Spacecraft s, Planet p){
         return sqrt(pow(s.getX() - p.getX(), 2) + pow(s.getY() - p.getY(), 2) + pow(s.getZ() - p.getZ(), 2));
     }
-void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
+int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
 {
     //int year, mon, day, hr, minute;
     double sec;
@@ -267,15 +267,19 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
         s = Spacecraft(planets[p].getVx() + 0.00645468 * sin(a1) * cos(a2), planets[p].getVy() + 0.00645468 * sin(a1) * sin(a2), planets[p].getVz() + 0.00645468 * cos(a1), 
         planets[p].getX() + planets[p].getOr() * sin(a1) * cos(a2), planets[p].getY() + planets[p].getOr() * sin(a1) * sin(a2), planets[p].getZ() + planets[p].getOr() * cos(a1));
        // cout << acos((1 - .46669 / .387) / .205) - .205 * sin(acos((1 - .46669 / .387 ) / .205));
-    for(double time = juliandate; time <= 88 + juliandate; time += .00069444){
+    for(double time = juliandate; time <= 1 + juliandate; time += .00069444){
         day += .00069444;
         double spr;
         s.setX(rf(1, s.getX(), s.getVx(), .00069444));
         s.setY(rf(1, s.getY(), s.getVy(), .00069444));
         s.setZ(rf(1, s.getZ(), s.getVz(), .00069444));
         s.setSphere(s.getX(), s.getY(), s.getZ());
+        if(sqrt(pow(s.getX(), 2) + pow(s.getY(), 2) + pow(s.getZ(), 2)) < 0.04303120071) //closest we've gotten to the sun
+            return 100;
        // cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
         for(int n = 0; n < 1; n++){
+            if(dist(s, planets[n]) < planets[n].getOr())
+                return n;
             double px = planets[n].getX();
                  double py = planets[n].getY();
                 double pz = planets[n].getZ();
@@ -293,12 +297,13 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
                 pz = planets[n].getZ();
             cout.precision(10);
            if(day >= 1){
-                
+                /*
                 cout << "time: " << time << " ";
                 cout << "range: " << range << " ";
                 cout << "right Ascension: " << rascend << " ";
                 cout << "declination: " << declin << "\n";
                 cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
+              */
                 day = 0;
                            }    
         }
@@ -313,7 +318,7 @@ void solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
         s.setVy(vf(gravmer / 1.496e+11 * sin(phi) * sin(theta), s.getY(), s.getVy(), .00069444));
         s.setVz(vf(gravmer / 1.496e+11 * cos(phi), s.getZ(), s.getVz(), .00069444));
     }
- 
+    return -1;
 }
 int main(){
     Spacecraft icarus;
@@ -321,7 +326,9 @@ int main(){
     for(double theta = 0; theta < 2 * M_PI; theta+= M_PI / 180){
         for(double phi = 0; phi < M_PI; phi+= M_PI / 180){
 
-            solarsystem(icarus, theta, phi, i);
+            //if(solarsystem(icarus, theta, phi, i) != -1)
+                cout << theta << " " << phi << ": " << solarsystem(icarus, theta, phi, i) << "\n";
+            
         }
     }
     return 0;
