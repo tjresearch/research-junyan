@@ -264,16 +264,18 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
 // planets[8] = Planet(0.0146e24, 1, 17.14175, 33.8684306892170, 130.2016, 6.9345, 110.30347, 113.76329, 90560, 0.24880766,39.48168677); //Pluto
     // planets[4] = Planet(3.302e23, 1, 7.0, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, .205,0.38709893); //Jupiter
         double day = 0;
-        s = Spacecraft(planets[p].getVx() + 0.00645468 * sin(a1) * cos(a2), planets[p].getVy() + 0.00645468 * sin(a1) * sin(a2), planets[p].getVz() + 0.00645468 * cos(a1), 
-        planets[p].getX() + planets[p].getOr() * sin(a1) * cos(a2), planets[p].getY() + planets[p].getOr() * sin(a1) * sin(a2), planets[p].getZ() + planets[p].getOr() * cos(a1));
+        s = Spacecraft(planets[p].getVx() + 0.00645468 * sin(a2) * cos(a1), planets[p].getVy() + 0.00645468 * sin(a2) * sin(a1), planets[p].getVz() + 0.00645468 * cos(a2), 
+        planets[p].getX() + planets[p].getOr() * sin(a2) * cos(a1), planets[p].getY() + planets[p].getOr() * sin(a2) * sin(a1), planets[p].getZ() + planets[p].getOr() * cos(a2));
        // cout << acos((1 - .46669 / .387) / .205) - .205 * sin(acos((1 - .46669 / .387 ) / .205));
-    for(double time = juliandate; time <= 1 + juliandate; time += .00069444){
+    for(double time = juliandate; time <= 88 + juliandate; time += .00069444){
         day += .00069444;
         double spr;
+        /*
         s.setX(rf(1, s.getX(), s.getVx(), .00069444));
         s.setY(rf(1, s.getY(), s.getVy(), .00069444));
         s.setZ(rf(1, s.getZ(), s.getVz(), .00069444));
-        s.setSphere(s.getX(), s.getY(), s.getZ());
+        */
+        //s.setSphere(s.getX(), s.getY(), s.getZ());
         if(sqrt(pow(s.getX(), 2) + pow(s.getY(), 2) + pow(s.getZ(), 2)) < 0.04303120071) //closest we've gotten to the sun
             return 100;
        // cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
@@ -296,19 +298,30 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
                  py = planets[n].getY();
                 pz = planets[n].getZ();
             cout.precision(10);
+            if(time == 0){
+                 s = Spacecraft(vx + 0.00645468 * sin(a2) * cos(a1),vy + 0.00645468 * sin(a2) * sin(a1), vz + 0.00645468 * cos(a2), 
+        planets[p].getX() + planets[p].getOr() * sin(a2) * cos(a1), planets[p].getY() + planets[p].getOr() * sin(a2) * sin(a1), planets[p].getZ() + planets[p].getOr() * cos(a2));
+            }
+            
+            s.setX(rf(1, s.getX(), s.getVx(), .00069444));
+        s.setY(rf(1, s.getY(), s.getVy(), .00069444));
+        s.setZ(rf(1, s.getZ(), s.getVz(), .00069444));
+            s.setSphere(s.getX(), s.getY(), s.getZ());
            if(day >= 1){
                 /*
                 cout << "time: " << time << " ";
                 cout << "range: " << range << " ";
                 cout << "right Ascension: " << rascend << " ";
                 cout << "declination: " << declin << "\n";
-                cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
-              */
+                */
+               // cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
+              
+                 cout << s.getX() << " " << s.getY() <<  "\n";
                 day = 0;
                            }    
         }
         double gravsun = 6.67e-11 * 1.989e30 / pow(s.getRow() * 1.496e+11, 2) ;
-        double gravmer = 6.67e-11 * 1.989e30 / pow(dist(s, planets[0]) * 1.496e+11, 2) ;
+        double gravmer = 6.67e-11 * 3.302e23 / pow(dist(s, planets[0]) * 1.496e+11, 2) ;
         double phi = acos((s.getZ() - planets[0].getZ()) / dist(s, planets[0]) );
         double theta = asin((s.getZ() - planets[0].getZ()) / dist(s, planets[0]));
        s.setVx(vf(gravsun / 1.496e+11 * sin(s.getPhi()) * cos(s.getTheta()), s.getX(), s.getVx(), .00069444));
@@ -323,8 +336,8 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
 int main(){
     Spacecraft icarus;
     int i = 0;
-    for(double theta = 0; theta < 2 * M_PI; theta+= M_PI / 180){
-        for(double phi = 0; phi < M_PI; phi+= M_PI / 180){
+    for(double theta = 5* M_PI/ 4; theta < 5* M_PI/ 4 + 1e-10; theta+= M_PI / 180){
+        for(double phi = M_PI / 2; phi < M_PI/ 2+ 1e-10; phi+= M_PI / 180){
 
             //if(solarsystem(icarus, theta, phi, i) != -1)
                 cout << theta << " " << phi << ": " << solarsystem(icarus, theta, phi, i) << "\n";
