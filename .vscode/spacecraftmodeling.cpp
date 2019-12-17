@@ -271,7 +271,7 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
         s = Spacecraft( 0.00645468 * sin(a2) * cos(a1),  0.00645468 * sin(a2) * sin(a1),  0.00645468 * cos(a2), 
         planets[p].getX() + planets[p].getOr() * sin(a2) * cos(a1), planets[p].getY() + planets[p].getOr() * sin(a2) * sin(a1), planets[p].getZ() + planets[p].getOr() * cos(a2));
        // cout << acos((1 - .46669 / .387) / .205) - .205 * sin(acos((1 - .46669 / .387 ) / .205));
-    for(double time = juliandate; time <= 88 + juliandate; time += .00069444){
+    for(double time = juliandate; time <= 1000 + juliandate; time += .00069444){
         day += .00069444;
         double spr;
         /*
@@ -316,26 +316,28 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
                 */
                // cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
               
-                // out << s.getX() << "\n";
+                 //out << s.getX() << "\n";
                  out << s.getY() <<  "\n";
                 day = 0;
                            }
         }
-          
-        s.setX(rf(1, s.getX(), s.getVx(), .00069444));
-        s.setY(rf(1, s.getY(), s.getVy(), .00069444));
-        s.setZ(rf(1, s.getZ(), s.getVz(), .00069444));
+       
+        s.setX(s.getX() + s.getVx() * .00069444);
+        s.setY(s.getY() + s.getVy() * .00069444);
+        s.setZ(s.getZ() + s.getVz() * .00069444);
             s.setSphere(s.getX(), s.getY(), s.getZ());
+            
         double gravsun = 6.67e-11 * 1.989e30 / pow(s.getRow() * 1.496e+11, 2) ;
         double gravmer = 6.67e-11 * 3.302e23 / pow(dist(s, planets[0]) * 1.496e+11, 2) ;
         double phi = acos((s.getZ() - planets[0].getZ()) / dist(s, planets[0]) );
         double theta = asin((s.getY() - planets[0].getY()) / dist(s, planets[0]));
-       s.setVx(vf(gravsun / 1.496e+11 * sin(M_PI + s.getPhi()) * cos(M_PI + s.getTheta()) * 7464960000, s.getX(), s.getVx(), .00069444));
-        s.setVy(vf(gravsun / 1.496e+11 * sin(M_PI + s.getPhi()) * sin(M_PI + s.getTheta()) * 7464960000, s.getY(), s.getVy(), .00069444));
-        s.setVz(vf(gravsun / 1.496e+11 * cos(M_PI + s.getPhi()) * 7464960000, s.getZ(), s.getVz(), .00069444));
-         s.setVx(vf(gravmer / 1.496e+11 * sin(phi + M_PI) * cos(theta + M_PI) * 7464960000, s.getX(), s.getVx(), .00069444));
-        s.setVy(vf(gravmer / 1.496e+11 * sin(phi + M_PI) * sin(theta + M_PI) * 7464960000, s.getY(), s.getVy(), .00069444));
-        s.setVz(vf(gravmer / 1.496e+11 * cos(phi + M_PI) * 7464960000, s.getZ(), s.getVz(), .00069444));
+       s.setVx(vf(gravsun / 1.496e+11 * sin(M_PI - s.getPhi()) * cos(M_PI + s.getTheta()) * 7464960000, s.getX(), s.getVx(), .00069444));
+        s.setVy(vf(gravsun / 1.496e+11 * sin(M_PI - s.getPhi()) * sin(M_PI + s.getTheta()) * 7464960000, s.getY(), s.getVy(), .00069444));
+        s.setVz(vf(gravsun / 1.496e+11 * cos(M_PI - s.getPhi()) * 7464960000, s.getZ(), s.getVz(), .00069444));
+         s.setVx(vf(gravmer / 1.496e+11 * sin( M_PI - phi) * cos(theta + M_PI) * 7464960000, s.getX(), s.getVx(), .00069444));
+        s.setVy(vf(gravmer / 1.496e+11 * sin( M_PI - phi) * sin(theta + M_PI) * 7464960000, s.getY(), s.getVy(), .00069444));
+        s.setVz(vf(gravmer / 1.496e+11 * cos(M_PI - phi) * 7464960000, s.getZ(), s.getVz(), .00069444));
+    
     }
     out.close();
     return -1;
@@ -343,8 +345,8 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
 int main(){
     Spacecraft icarus;
     int i = 0;
-    for(double theta = 5* M_PI/ 4; theta < 5* M_PI/ 4 + 1e-10; theta+= M_PI / 180){
-        for(double phi = M_PI / 2; phi < M_PI/ 2+ 1e-10; phi+= M_PI / 180){
+    for(double theta = 3.70178; theta < 3.70178 + 1e-10; theta+= M_PI / 180){
+        for(double phi = 1.53649; phi < 1.53649 + 1e-10; phi+= M_PI / 180){
 
             //if(solarsystem(icarus, theta, phi, i) != -1)
                 cout << theta << " " << phi << ": " << solarsystem(icarus, theta, phi, i) << "\n";
