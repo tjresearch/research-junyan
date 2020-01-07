@@ -132,6 +132,9 @@ class Planet
         orbitalr = o;
         inclin = i * d2r;
         range = r;
+        //orbitalr = sqrt(6.67 * 10e-11 * m / 9.2672) / 1.496e+11;
+        //if(orbitalr < r)
+        //orbitalr = 1e-3;
         rascend = ra * d2r;
         declin = dec * d2r;
         ascendn = an * d2r;
@@ -258,7 +261,7 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
   out.open ("spacecraft.txt");
   
      Planet planets [10];
-     planets[0] = Planet(3.302e23, 1e-10, 7.00487, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, 0.20563069,0.38709893); //Mercury
+     planets[0] = Planet(3.302e23, 1e-3, 7.00487, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, 0.20563069,0.38709893); //Mercury
     // planets[1] = Planet(4.87e24, 1, 7.0, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, .205,0.38709893); //Venus
    //  planets[2] = Planet(5.972e24, 1, 0.00005, 1.01014351904246, 335.1159, 0.0009, -11.26064, 114.20783, 365.2, 0.01671022, 1); //Earth
    //  planets[3] = Planet(0.642e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Mars
@@ -351,12 +354,17 @@ int main(){
     //theta 3.70178 phi 1.53649
     //theta 0 phi 0.05235987756
     //theta  2.19911  phi 1.2217
-    for(double theta = 0; theta < 2* M_PI; theta+= M_PI / 180){
+    // theta 3.787359619
+    // 3.136425469 theta
+    for(double theta = 3.787359619; theta < 2* M_PI; theta+= M_PI / 180){
         for(double phi =0; phi < M_PI; phi+= M_PI / 180){
 
             //if(solarsystem(icarus, theta, phi, i) != -1)
                 cout << theta << " " << phi << ": " << solarsystem(icarus, theta, phi, i) << "\n";
-            
+            if(solarsystem(icarus, theta, phi, i) != -1){
+            phi = M_PI + 1;
+            theta = 2 * M_PI + 1;
+            }
         }
     }
     return 0;
