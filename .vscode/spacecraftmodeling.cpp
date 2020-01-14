@@ -1,4 +1,6 @@
 #define _USE_MATH_DEFINES
+//#include <mpi.h>
+#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <io.h>
@@ -349,23 +351,42 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
     return -1;
 }
 int main(){
+    //#pragma omp parallel{
+    //MPI_Init(NULL, NULL);
+    
+    // int world_size;
+    //MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    //int world_rank;
+    //MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+
+    // Get the name of the processor
+    /*
+    char processor_name[MPI_MAX_PROCESSOR_NAME];
+    int name_len;
+    MPI_Get_processor_name(processor_name, &name_len);
+    */
     Spacecraft icarus;
     int i = 0;
     //theta 3.70178 phi 1.53649
     //theta 0 phi 0.05235987756
     //theta  2.19911  phi 1.2217
     // theta 3.787359619
-    // 3.136425469 theta
-    for(double theta = 3.787359619; theta < 2* M_PI; theta+= M_PI / 180){
+    // 4.136425469 theta
+    // theta 5.078903265
+    // theta 6.126100816
+    for(double theta =  5.078903265; theta < 2* M_PI; theta+= M_PI / 180){
         for(double phi =0; phi < M_PI; phi+= M_PI / 180){
 
             //if(solarsystem(icarus, theta, phi, i) != -1)
                 cout << theta << " " << phi << ": " << solarsystem(icarus, theta, phi, i) << "\n";
-            if(solarsystem(icarus, theta, phi, i) != -1){
+            if(solarsystem(icarus, theta, phi, i) != -1 && solarsystem(icarus, theta, phi, i) != 100){
             phi = M_PI + 1;
             theta = 2 * M_PI + 1;
             }
         }
     }
-    return 0;
+    //}
+    //MPI_Finalize();
+        return 0;
 }
