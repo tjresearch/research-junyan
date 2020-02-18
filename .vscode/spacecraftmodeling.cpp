@@ -3,7 +3,7 @@
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <io.h>
+//#include <io.h>
 #include <fstream> 
 #include <iostream>
 #include <vector>
@@ -145,8 +145,9 @@ class Planet
         ec = e;
         axis = a;
         double n = acos((1 - r / a ) / e);
-        ma = acos((1 - r / a ) / e) - e * sin(acos((1 - r / a ) / e));
-        ima = acos((1 - r / a ) / e) - e * sin(acos((1 - r / a ) / e));
+        ma = 0;
+        //acos((1 - r / a ) / e) - e * sin(acos((1 - r / a ) / e));
+        //ima = acos((1 - r / a ) / e) - e * sin(acos((1 - r / a ) / e));
         /*
         if(i < 1){
             peri = peri + ascendn;
@@ -295,9 +296,14 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
             if(dist(s, planets[n]) < planets[n].getOr() && time != juliandate)
                 return n;
             double px = planets[n].getX();
+           // if(day >= 1)
+            //out << px << "\n";
                  double py = planets[n].getY();
+            if(day >= 1)
+             out << py << "\n";
                 double pz = planets[n].getZ();
-            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
+           // planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
+           planets[n].setMA(fmod( planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
             planets[n].eccentricAnomaly();
             planets[n].trueAnomaly();
             double range = planets[n].ellipticalR();
@@ -316,16 +322,16 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
         planets[p].getX() + planets[p].getOr() * sin(a2) * cos(a1), planets[p].getY() + planets[p].getOr() * sin(a2) * sin(a1), planets[p].getZ() + planets[p].getOr() * cos(a2));
             }  
            if(day >= 1){
-                /*
+                
                 cout << "time: " << time << " ";
                 cout << "range: " << range << " ";
                 cout << "right Ascension: " << rascend << " ";
                 cout << "declination: " << declin << "\n";
-                */
+                
                // cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
               
-                 //out << s.getX() << "\n";
-                 //out << s.getY() <<  "\n";
+                //out << s.getX() << "\n";
+                // out << s.getY() <<  "\n";
                 day = 0;
                            }
         }
@@ -351,6 +357,8 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
     return -1;
 }
 int main(){
+  
+//int main(int argc, char* argv[]) {}
     //#pragma omp parallel{
     //MPI_Init(NULL, NULL);
     
@@ -375,8 +383,9 @@ int main(){
     // 4.136425469 theta
     // theta 5.078903265
     // theta 6.126100816
-    for(double theta =  5.078903265; theta < 2* M_PI; theta+= M_PI / 180){
-        for(double phi =0; phi < M_PI; phi+= M_PI / 180){
+    //for()
+    for(double theta = 3.787359619; theta < 3.787359619 + 1e-10; theta+= M_PI / 180){
+        for(double phi = M_PI /2 ; phi < M_PI / 2 + 1e-10; phi+= M_PI / 180){
 
             //if(solarsystem(icarus, theta, phi, i) != -1)
                 cout << theta << " " << phi << ": " << solarsystem(icarus, theta, phi, i) << "\n";
