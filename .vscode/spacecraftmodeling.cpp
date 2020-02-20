@@ -129,7 +129,7 @@ class Planet
      double vx, vy, vz;
      double d2r = M_PI / 180;
      Planet() { }
-    Planet(double m, double o, double i, double r, double ra, double dec, double an, double p, double period, double e, double a){
+    Planet(double m, double o, double i, double r, double ra, double dec, double an, double p, double period, double e, double a, double x, double y, double z, double vxc, double vyc, double vzc){
         mass = m; 
         orbitalr = o;
         inclin = i * d2r;
@@ -145,9 +145,18 @@ class Planet
         ec = e;
         axis = a;
         double n = acos((1 - r / a ) / e);
-        ma = 0;
-        //acos((1 - r / a ) / e) - e * sin(acos((1 - r / a ) / e));
-        //ima = acos((1 - r / a ) / e) - e * sin(acos((1 - r / a ) / e));
+        px = x;
+        py = y;
+        pz = z;
+        vx = vxc;
+        vy = vyc;
+        vz = vzc;
+       // ma = 0;
+       // ma = acos((1 - r / a ) / e) - e * sin(acos((1 - r / a ) / e));
+       // ima = acos((1 - r / a ) / e) - e * sin(acos((1 - r / a ) / e));
+         ma = atan(((px * vx + py * vy + pz * vz)/ (a * a * motion)) / (1 - sqrt(px * px + py * py + pz * pz) / a)) 
+         - ec * sin(atan(((px * vx + py * vy + pz * vz)/ (a * a * motion)) / (1 - sqrt(px * px + py * py + pz * pz) / a)));
+       ima = ma;
         /*
         if(i < 1){
             peri = peri + ascendn;
@@ -264,7 +273,8 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
   out.open ("spacecraft.txt");
   
      Planet planets [10];
-     planets[0] = Planet(3.302e23, 1e-3, 7.00487, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, 0.20563069,0.38709893); //Mercury
+     planets[0] = Planet(3.302e23, 1e-3, 7.00487, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, 0.20563069,0.38709893,
+      -2.112940522890843E-01, 2.499646441178046E-01, 3.980885339059970E-02, -2.717908606532378E-02, -1.704717040208352E-02, 1.100301789608752E-03); //Mercury
     // planets[1] = Planet(4.87e24, 1, 7.0, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, .205,0.38709893); //Venus
    //  planets[2] = Planet(5.972e24, 1, 0.00005, 1.01014351904246, 335.1159, 0.0009, -11.26064, 114.20783, 365.2, 0.01671022, 1); //Earth
    //  planets[3] = Planet(0.642e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Mars
@@ -285,10 +295,10 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
         double spr;
         /*
         s.setX(rf(1, s.getX(), s.getVx(), .00069444));
-        s.setY(rf(1, s.getY(), s.getVy(), .00069444));
-        s.setZ(rf(1, s.getZ(), s.getVz(), .00069444));
+       tZ(rf(1, s.getZ(), s.getVz(), .00069444));
         */
-        //s.setSphere(s.getX(), s.getY(), s.getZ());
+        //s.setSp s.setY(rf(1, s.getY(), s.getVy(), .00069444));
+        s.setSphere(s.getX(), s.getY(), s.getZ());
         if(sqrt(pow(s.getX(), 2) + pow(s.getY(), 2) + pow(s.getZ(), 2)) < 0.04303120071) //closest we've gotten to the sun
             return 100;
        // cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
@@ -302,8 +312,8 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
             if(day >= 1)
              out << py << "\n";
                 double pz = planets[n].getZ();
-           // planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
-           planets[n].setMA(fmod( planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
+            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
+          // planets[n].setMA(fmod( planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
             planets[n].eccentricAnomaly();
             planets[n].trueAnomaly();
             double range = planets[n].ellipticalR();
