@@ -281,10 +281,12 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
     // 9.163973382911959E-01, -4.249746745750780E-01, 1.601998994026577E-05, 6.962668804528970E-03, 1.554826356216624E-02, -1.320226017688261E-06); //Earth
     // planets[0] = Planet(0.642e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231, //Mars
     //-1.538330385243809E+00, 6.376127589280390E-01, 5.110497339903643E-02, -4.834909566264149E-03, -1.173146288124897E-02, -1.271951751534037E-04); 
-   planets[0] = Planet(1898e24, 1, 1.30530, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 5.20336301, //Jupiter
-     -4.053769515202177E-01, -5.256590709274248E+00, 3.090371506818809E-02, 7.441268269140511E-03, -2.245620586436468E-04, -1.655281797727711E-04);
-    //   planets[5] = Planet(568e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Saturn
-    //  planets[6] = Planet(86.8e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231);//Uranus
+   //planets[0] = Planet(1898e24, 1, 1.30530, 5.272299325274, 265.5878, 0.3359, 100.55615, -85.8023, 4328.9, 0.04839266, 5.20336301, //Jupiter
+     //-4.053769515202177E-01, -5.256590709274248E+00, 3.090371506818809E-02, 7.441268269140511E-03, -2.245620586436468E-04, -1.655281797727711E-04);
+      //planets[0] = Planet(568e24, 1, 2.48446, 1.66602003028769, 288.4594, 0.2227, 113.71504, -41.2831, 10751.8, 0.05415060, 9.53707032,
+      //3.181044968477705E+00, -9.528596201541061E+00, 3.903112876199565E-02, 4.991280595151790E-03, 1.750654182256989E-03, -2.292205742319197E-04); //Saturn
+      planets[0] = Planet(86.8e24, 1, 0.76986, 19.83381717157, 33.6702, -0.4996, 74.22988, 96.73436, 30667.5, 0.04716771, 19.19126393,
+      1.650566200245873E+01, 1.099604230661651E+01, -1.729240416727421E-01, -2.202500959781696E-03, 3.089681894702222E-03, 3.989664038785872E-05);//Uranus
     //  planets[7] = Planet(102e24, 1, 1.85061, 1.66602003028769, 130.2016, 6.9345, 49.57854, 286.4623, 687.0, 0.09341233, 1.52366231); //Neptune
 // planets[8] = Planet(0.0146e24, 1, 17.14175, 33.8684306892170, 130.2016, 6.9345, 110.30347, 113.76329, 90560, 0.24880766,39.48168677); //Pluto
     // planets[4] = Planet(3.302e23, 1, 7.0, .32971028480559, 130.2016, 6.9345, 48.33167, 29.12703035, 88, .205,0.38709893); //Jupiter
@@ -294,7 +296,7 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
        // cout << acos((1 - .46669 / .387) / .205) - .205 * sin(acos((1 - .46669 / .387 ) / .205));
     //for(double time = juliandate; time <= 1000 + juliandate; time += .00069444){
         double time = juliandate;
-        while(sqrt(pow(s.getX(), 2) + pow(s.getY(), 2) + pow(s.getZ(), 2)) <= 10){
+        while(sqrt(pow(s.getX(), 2) + pow(s.getY(), 2) + pow(s.getZ(), 2)) <= 150){
         day += .00069444;
         double spr;
         /*
@@ -320,8 +322,14 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
             planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 185), 2 * M_PI));
             else if(n == 3)     
          planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 344), 2 * M_PI));
-           */
-            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 344), 2 * M_PI));
+           else if(n == 4)
+            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 2218.526), 2 * M_PI));
+            else if(n == 5)
+            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 6111.204), 2 * M_PI));
+            else if(n == 6)
+
+            */
+            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 6111.204), 2 * M_PI));           
           // planets[n].setMA(fmod( planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
             planets[n].eccentricAnomaly();
             planets[n].trueAnomaly();
