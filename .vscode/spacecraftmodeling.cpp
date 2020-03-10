@@ -378,22 +378,26 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
             s.setSphere(s.getX(), s.getY(), s.getZ());
             
         double gravsun = 6.67e-11 * 1.989e30 / pow(s.getRow() * 1.496e+11, 2) ;
-        double gravmer = 6.67e-11 * 3.302e23 / pow(dist(s, planets[0]) * 1.496e+11, 2) ;
+       // double gravmer = 6.67e-11 * 3.302e23 / pow(dist(s, planets[0]) * 1.496e+11, 2) ;
         double phi = acos((s.getZ() - planets[0].getZ()) / dist(s, planets[0]) );
         double theta = asin((s.getY() - planets[0].getY()) / dist(s, planets[0]));
        s.setVx(vf(gravsun / 1.496e+11 * sin(M_PI - s.getPhi()) * cos(M_PI + s.getTheta()) * 7464960000, s.getX(), s.getVx(), .00069444));
         s.setVy(vf(gravsun / 1.496e+11 * sin(M_PI - s.getPhi()) * sin(M_PI + s.getTheta()) * 7464960000, s.getY(), s.getVy(), .00069444));
         s.setVz(vf(gravsun / 1.496e+11 * cos(M_PI - s.getPhi()) * 7464960000, s.getZ(), s.getVz(), .00069444));
-         s.setVx(vf(gravmer / 1.496e+11 * sin( M_PI - phi) * cos(theta + M_PI) * 7464960000, s.getX(), s.getVx(), .00069444));
+         for(int n = 0; n < 8; n++){
+              double gravmer = 6.67e-11 * 3.302e23 / pow(dist(s, planets[0]) * 1.496e+11, 2) ;
+              s.setVx(vf(gravmer / 1.496e+11 * sin( M_PI - phi) * cos(theta + M_PI) * 7464960000, s.getX(), s.getVx(), .00069444));
         s.setVy(vf(gravmer / 1.496e+11 * sin( M_PI - phi) * sin(theta + M_PI) * 7464960000, s.getY(), s.getVy(), .00069444));
         s.setVz(vf(gravmer / 1.496e+11 * cos(M_PI - phi) * 7464960000, s.getZ(), s.getVz(), .00069444));
+         }
+         
         time += .00069444;
     }
     out.close();
     return -1;
 }
 int main(){
-  
+  int time;
 //int main(int argc, char* argv[]) {}
     //#pragma omp parallel{
     //MPI_Init(NULL, NULL);
@@ -425,7 +429,8 @@ int main(){
 
             //if(solarsystem(icarus, theta, phi, i) != -1)
                 cout << theta << " " << phi << ": " << solarsystem(icarus, theta, phi, i) << "\n";
-            if(solarsystem(icarus, theta, phi, i) != -1 && solarsystem(icarus, theta, phi, i) != 100){
+            //if(solarsystem(icarus, theta, phi, i) != i && solarsystem(icarus, theta, phi, i) != 100){
+            if(solarsystem(icarus, theta, phi, i) != i){
             phi = M_PI + 1;
             theta = 2 * M_PI + 1;
             }
