@@ -265,7 +265,7 @@ class Planet
         return sqrt(pow(s.getX() - p.getX(), 2) + pow(s.getY() - p.getY(), 2) + pow(s.getZ() - p.getZ(), 2));
     }
     
-int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
+int solarsystem(Spacecraft &s, double &a1, double &a2, int &p, double &t, double &temp)
 {
     //int year, mon, day, hr, minute;
     double sec;
@@ -289,15 +289,61 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
      1.650566200245873E+01, 1.099604230661651E+01, -1.729240416727421E-01, -2.202500959781696E-03, 3.089681894702222E-03, 3.989664038785872E-05);//Uranus
    planets[7] = Planet(102e24, 1, 1.76917, 29.93486047576, 346.9602, -1.0202 , 131.72169, -86.75034, 60225, 0.00858587, 30.06896348,
     2.915843957983342E+01, -6.752549485815638E+00, -5.330168462398258E-01, 6.955819371261789E-04,  3.077650123843038E-03, -7.970622808811658E-05); //Neptune
- 
+    double time = juliandate;
+    for(double time = juliandate; time <= t; time += .00069444){
+        for(int n = 0; n < 8; n++){
+            if(dist(s, planets[n]) < planets[n].getOr() && time != juliandate)
+                return n;
+            double px = planets[n].getX();
+           // if(day >= 1)
+            //out << px << "\n";
+                 double py = planets[n].getY();
+           // if(day >= 1)
+            // out << py << "\n";
+                double pz = planets[n].getZ();
+          if(n == 0)
+          planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
+          else if(n == 1)
+            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));           
+          else if(n == 2)
+            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 185), 2 * M_PI));
+            else if(n == 3)     
+         planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 344), 2 * M_PI));
+           else if(n == 4)
+            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 2218.526), 2 * M_PI));
+            else if(n == 5)
+            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 6111.204), 2 * M_PI));
+            else if(n == 6)
+            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 15757.844), 2 * M_PI));
+            else if(n == 7)
+             planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate - 1695.75), 2 * M_PI));           
+            
+           // planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));           
+          // planets[n].setMA(fmod( planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
+            planets[n].eccentricAnomaly();
+            planets[n].trueAnomaly();
+            double range = planets[n].ellipticalR();
+            double rascend = planets[n].rightAscension();
+            double declin = planets[n].Declination();
+
+            double vx = planets[n].getX() - px;
+            double vy = planets[n].getY() - py;
+            double vz = planets[n].getZ() - pz;
+                px = planets[n].getX();
+                 py = planets[n].getY();
+                pz = planets[n].getZ();
+            cout.precision(10);
+    }
+    }
         double day = 0;
         s = Spacecraft( 0.00645468 * sin(a2) * cos(a1),  0.00645468 * sin(a2) * sin(a1),  0.00645468 * cos(a2), 
         planets[p].getX() + planets[p].getOr() * sin(a2) * cos(a1), planets[p].getY() + planets[p].getOr() * sin(a2) * sin(a1), planets[p].getZ() + planets[p].getOr() * cos(a2));
        // cout << acos((1 - .46669 / .387) / .205) - .205 * sin(acos((1 - .46669 / .387 ) / .205));
     //for(double time = juliandate; time <= 1000 + juliandate; time += .00069444){
-        double time = juliandate;
+        
+
         while(sqrt(pow(s.getX(), 2) + pow(s.getY(), 2) + pow(s.getZ(), 2)) <= 450){
-        day += .00069444;
+        //day += .00069444;
         double spr;
         /*
         s.setX(rf(1, s.getX(), s.getVx(), .00069444));
@@ -310,8 +356,10 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
        // cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
         
         for(int n = 0; n < 8; n++){
-            if(dist(s, planets[n]) < planets[n].getOr() && time != juliandate)
+            if(dist(s, planets[n]) < planets[n].getOr() && time != juliandate){
+                temp = time - t;
                 return n;
+            }
             double px = planets[n].getX();
            // if(day >= 1)
             //out << px << "\n";
@@ -392,12 +440,13 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p)
          }
          
         time += .00069444;
+        day += .00069444;
     }
     out.close();
     return -1;
 }
 int main(){
-  int time;
+  int time = 2458730.5;
 //int main(int argc, char* argv[]) {}
     //#pragma omp parallel{
     //MPI_Init(NULL, NULL);
@@ -424,19 +473,32 @@ int main(){
     // theta 5.078903265
     // theta 6.126100816
     //for()
+    double mintt;
+    double minta;
+    double mintp;
+    double mint = 3460; //time it took new horizons to reach pluto in days
+    for(double t = juliandate; t < time; t++){
     for(double theta = 3.787359619; theta < 3.787359619 + 1e-10; theta+= M_PI / 180){
         for(double phi = M_PI /2 ; phi < M_PI / 2 + 1e-10; phi+= M_PI / 180){
-
+            double temp;
             //if(solarsystem(icarus, theta, phi, i) != -1)
-                cout << theta << " " << phi << ": " << solarsystem(icarus, theta, phi, i) << "\n";
+                cout << theta << " " << phi << ": " << solarsystem(icarus, theta, phi, i, t, temp) << "\n";
             //if(solarsystem(icarus, theta, phi, i) != i && solarsystem(icarus, theta, phi, i) != 100){
-            if(solarsystem(icarus, theta, phi, i) != i){
+            if(solarsystem(icarus, theta, phi, i, t, temp) != i){
+            if(temp < mint){
+                mint = temp;
+                mintt = t;
+                minta = theta;
+                mintp = phi;
+            }
             phi = M_PI + 1;
             theta = 2 * M_PI + 1;
             }
         }
     }
+    }
     //}
     //MPI_Finalize();
+    cout << mint << " " << mintt << " " << minta << " " << " " << mintp;
         return 0;
 }
