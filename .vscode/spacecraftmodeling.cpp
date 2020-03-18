@@ -17,7 +17,7 @@
 using namespace std;
 double juliandate = 2458724.5; //for august 29
 double timepast;
-//initial speed for saturn v 38,946 km/h
+//initial speed for saturn v 38,946 km/h or 40233.5
 class Spacecraft
 {
     public:
@@ -289,11 +289,10 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p, double &t, double
      1.650566200245873E+01, 1.099604230661651E+01, -1.729240416727421E-01, -2.202500959781696E-03, 3.089681894702222E-03, 3.989664038785872E-05);//Uranus
    planets[7] = Planet(102e24, 1, 1.76917, 29.93486047576, 346.9602, -1.0202 , 131.72169, -86.75034, 60225, 0.00858587, 30.06896348,
     2.915843957983342E+01, -6.752549485815638E+00, -5.330168462398258E-01, 6.955819371261789E-04,  3.077650123843038E-03, -7.970622808811658E-05); //Neptune
-    double time = juliandate;
-    for(double time = juliandate; time <= t; time += .00069444){
+    double time;
+    for(time = juliandate; time <= t; time += .00069444){
         for(int n = 0; n < 8; n++){
-            if(dist(s, planets[n]) < planets[n].getOr() && time != juliandate)
-                return n;
+          
             double px = planets[n].getX();
            // if(day >= 1)
             //out << px << "\n";
@@ -325,10 +324,9 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p, double &t, double
             double range = planets[n].ellipticalR();
             double rascend = planets[n].rightAscension();
             double declin = planets[n].Declination();
-
-            double vx = planets[n].getX() - px;
-            double vy = planets[n].getY() - py;
-            double vz = planets[n].getZ() - pz;
+            planets[n].vx = (planets[n].getX() - px) / .00069444;
+             planets[n].vy = (planets[n].getY() - py) / .00069444;
+              planets[n].vz = (planets[n].getZ() - pz) / .00069444;
                 px = planets[n].getX();
                  py = planets[n].getY();
                 pz = planets[n].getZ();
@@ -336,76 +334,89 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p, double &t, double
     }
     }
         double day = 0;
-        s = Spacecraft( 0.00645468 * sin(a2) * cos(a1),  0.00645468 * sin(a2) * sin(a1),  0.00645468 * cos(a2), 
+        s = Spacecraft( 0.00645468 * sin(a2) * cos(a1) + planets[p].getVx(),  0.0064468 * sin(a2) * sin(a1) + planets[p].getVy(),  0.00645468 * cos(a2) + planets[p].getVz(), 
         planets[p].getX() + planets[p].getOr() * sin(a2) * cos(a1), planets[p].getY() + planets[p].getOr() * sin(a2) * sin(a1), planets[p].getZ() + planets[p].getOr() * cos(a2));
        // cout << acos((1 - .46669 / .387) / .205) - .205 * sin(acos((1 - .46669 / .387 ) / .205));
-    //for(double time = juliandate; time <= 1000 + juliandate; time += .00069444){
-        
-
-        while(sqrt(pow(s.getX(), 2) + pow(s.getY(), 2) + pow(s.getZ(), 2)) <= 450){
-        //day += .00069444;
-        double spr;
-        /*
-        s.setX(rf(1, s.getX(), s.getVx(), .00069444));
-       tZ(rf(1, s.getZ(), s.getVz(), .00069444));
-        */
-        //s.setSp s.setY(rf(1, s.getY(), s.getVy(), .00069444));
-        s.setSphere(s.getX(), s.getY(), s.getZ());
-        if(sqrt(pow(s.getX(), 2) + pow(s.getY(), 2) + pow(s.getZ(), 2)) < 0.04303120071) //closest we've gotten to the sun
+        //for(double time = juliandate; time <= 1000 + juliandate; time += .00069444){
+       double inittime = time;
+         double px = planets[0].getX();
+               double  py = planets[0].getY();
+              double  pz = planets[0].getZ();
+            //  cout << px << " " << py << "\n";
+          //    cout << s.getX() << " " << s.getY() << "\n";
+        while(sqrt(pow(s.getX(), 2) + pow(s.getY(), 2) + pow(s.getZ(), 2)) <= 450)
+        {
+            //day += .00069444;
+            double spr;
+            /*
+         s.setX(rf(1, s.getX(), s.getVx(), .00069444));
+            tZ(rf(1, s.getZ(), s.getVz(), .00069444));
+            */
+             s.setX(s.getX() + s.getVx() * .00069444);
+                s.setY(s.getY() + s.getVy() * .00069444);
+                s.setZ(s.getZ() + s.getVz() * .00069444);
+                s.setSphere(s.getX(), s.getY(), s.getZ());
+                /*
+                cout << planets[0].getX() << " " <<   planets[0].getY() << "\n";
+                 cout << s.getX() << " " << s.getY() << "\n";
+                 */
+            //s.setSp s.setY(rf(1, s.getY(), s.getVy(), .00069444));
+            //s.setSphere(s.getX(), s.getY(), s.getZ());
+            if(sqrt(pow(s.getX(), 2) + pow(s.getY(), 2) + pow(s.getZ(), 2)) < 0.04303120071) //closest we've gotten to the sun
             return 100;
-       // cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
-        
-        for(int n = 0; n < 8; n++){
-            if(dist(s, planets[n]) < planets[n].getOr() && time != juliandate){
+            // cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
+           // double gravsun = 6.67e-11 * 1.989e30 / pow(s.getRow() * 1.496e+11, 2) ;
+            for(int n = 0; n < 8; n++){
+                if(dist(s, planets[n]) < planets[n].getOr() && time != inittime){
                 temp = time - t;
                 return n;
-            }
-            double px = planets[n].getX();
-           // if(day >= 1)
-            //out << px << "\n";
+                 }
+                double px = planets[n].getX();
+                    // if(day >= 1)
+                //out << px << "\n";
                  double py = planets[n].getY();
-           // if(day >= 1)
-            // out << py << "\n";
+                // if(day >= 1)
+                    // out << py << "\n";
                 double pz = planets[n].getZ();
-          if(n == 0)
-          planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
-          else if(n == 1)
-            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));           
-          else if(n == 2)
-            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 185), 2 * M_PI));
-            else if(n == 3)     
-         planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 344), 2 * M_PI));
-           else if(n == 4)
-            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 2218.526), 2 * M_PI));
-            else if(n == 5)
-            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 6111.204), 2 * M_PI));
-            else if(n == 6)
-            planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 15757.844), 2 * M_PI));
-            else if(n == 7)
-             planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate - 1695.75), 2 * M_PI));           
+                if(n == 0)
+                    planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
+                else if(n == 1)
+                    planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));           
+                else if(n == 2)
+                    planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 185), 2 * M_PI));
+                else if(n == 3)     
+                    planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 344), 2 * M_PI));
+                else if(n == 4)
+                    planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 2218.526), 2 * M_PI));
+                else if(n == 5)
+                    planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 6111.204), 2 * M_PI));
+                else if(n == 6)
+                    planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate + 15757.844), 2 * M_PI));
+                else if(n == 7)
+                    planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate - 1695.75), 2 * M_PI));           
             
-           // planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));           
-          // planets[n].setMA(fmod( planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
-            planets[n].eccentricAnomaly();
-            planets[n].trueAnomaly();
-            double range = planets[n].ellipticalR();
-            double rascend = planets[n].rightAscension();
-            double declin = planets[n].Declination();
+                // planets[n].setMA(fmod(planets[n].getIMA() + planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));           
+                // planets[n].setMA(fmod( planets[n].getMeanMotion() * (time - juliandate), 2 * M_PI));
+                planets[n].eccentricAnomaly();
+                planets[n].trueAnomaly();
+                double range = planets[n].ellipticalR();
+                double rascend = planets[n].rightAscension();
+                double declin = planets[n].Declination();
 
-            double vx = planets[n].getX() - px;
-            double vy = planets[n].getY() - py;
-            double vz = planets[n].getZ() - pz;
+                double vx = planets[n].getX() - px;
+                double vy = planets[n].getY() - py;
+                double vz = planets[n].getZ() - pz;
                 px = planets[n].getX();
                  py = planets[n].getY();
                 pz = planets[n].getZ();
-            cout.precision(10);
-            
-            if(time == juliandate){
+                cout.precision(10);
+            /*
+                if(time == juliandate){
                  s = Spacecraft(s.getVx() + 0.027352689 * sin(a2) * cos(a1),s.getVy() + 0.027352689 * sin(a2) * sin(a1), s.getVz() + 0.027352689 * cos(a2), 
-                planets[p].getX() + planets[p].getOr() * sin(a2) * cos(a1), planets[p].getY() + planets[p].getOr() * sin(a2) * sin(a1), planets[p].getZ() + planets[p].getOr() * cos(a2));
-            }
-
-           if(day >= 1){
+                    planets[p].getX() + planets[p].getOr() * sin(a2) * cos(a1), planets[p].getY() + planets[p].getOr() * sin(a2) * sin(a1), planets[p].getZ() + planets[p].getOr() * cos(a2));
+                 }
+            */
+                    if(day >= 1){
                 cout << "planet: " << n << " ";
                 cout << "time: " << time << " ";
                 cout << "range: " << range << " ";
@@ -416,37 +427,50 @@ int solarsystem(Spacecraft &s, double &a1, double &a2, int &p, double &t, double
               
                 //out << s.getX() << "\n";
                 // out << s.getY() <<  "\n";
-                           }
-        }
-       if(day >= 1)
-       day = 0;
-        s.setX(s.getX() + s.getVx() * .00069444);
-        s.setY(s.getY() + s.getVy() * .00069444);
-        s.setZ(s.getZ() + s.getVz() * .00069444);
-            s.setSphere(s.getX(), s.getY(), s.getZ());
+                    }
+            }
+            if(day >= 1)
+                day = 0;
+                /*
+                s.setX(s.getX() + s.getVx() * .00069444);
+                s.setY(s.getY() + s.getVy() * .00069444);
+                s.setZ(s.getZ() + s.getVz() * .00069444);
+                s.setSphere(s.getX(), s.getY(), s.getZ());
+            */
+                double gravsun = 6.67e-11 * 1.989e30 / pow(s.getRow() * 1.496e+11, 2) ;
+                // double gravmer = 6.67e-11 * 3.302e23 / pow(dist(s, planets[0]) * 1.496e+11, 2) ;
+                
+             double phi = acos((s.getZ() - planets[0].getZ()) / dist(s, planets[0]) );
+                 double theta = asin((s.getY() - planets[0].getY()) / dist(s, planets[0]));
+                s.setVx(vf(gravsun / 1.496e+11 * sin(M_PI - s.getPhi()) * cos(M_PI + s.getTheta()) * 7464960000, s.getX(), s.getVx(), .00069444));
+                 s.setVy(vf(gravsun / 1.496e+11 * sin(M_PI - s.getPhi()) * sin(M_PI + s.getTheta()) * 7464960000, s.getY(), s.getVy(), .00069444));
+                 s.setVz(vf(gravsun / 1.496e+11 * cos(M_PI - s.getPhi()) * 7464960000, s.getZ(), s.getVz(), .00069444));
             
-        double gravsun = 6.67e-11 * 1.989e30 / pow(s.getRow() * 1.496e+11, 2) ;
-       // double gravmer = 6.67e-11 * 3.302e23 / pow(dist(s, planets[0]) * 1.496e+11, 2) ;
-        double phi = acos((s.getZ() - planets[0].getZ()) / dist(s, planets[0]) );
-        double theta = asin((s.getY() - planets[0].getY()) / dist(s, planets[0]));
-       s.setVx(vf(gravsun / 1.496e+11 * sin(M_PI - s.getPhi()) * cos(M_PI + s.getTheta()) * 7464960000, s.getX(), s.getVx(), .00069444));
-        s.setVy(vf(gravsun / 1.496e+11 * sin(M_PI - s.getPhi()) * sin(M_PI + s.getTheta()) * 7464960000, s.getY(), s.getVy(), .00069444));
-        s.setVz(vf(gravsun / 1.496e+11 * cos(M_PI - s.getPhi()) * 7464960000, s.getZ(), s.getVz(), .00069444));
-         for(int n = 0; n < 8; n++){
-              double gravmer = 6.67e-11 * 3.302e23 / pow(dist(s, planets[0]) * 1.496e+11, 2) ;
+            for(int n = 0; n < 8; n++){
+                 phi = acos((s.getZ() - planets[n].getZ()) / dist(s, planets[n]) );
+                 theta = asin((s.getY() - planets[n].getY()) / dist(s, planets[n]));
+                double gravmer = 6.67e-11 * 3.302e23 / pow(dist(s, planets[n]) * 1.496e+11, 2) ;
               s.setVx(vf(gravmer / 1.496e+11 * sin( M_PI - phi) * cos(theta + M_PI) * 7464960000, s.getX(), s.getVx(), .00069444));
-        s.setVy(vf(gravmer / 1.496e+11 * sin( M_PI - phi) * sin(theta + M_PI) * 7464960000, s.getY(), s.getVy(), .00069444));
-        s.setVz(vf(gravmer / 1.496e+11 * cos(M_PI - phi) * 7464960000, s.getZ(), s.getVz(), .00069444));
-         }
-         
-        time += .00069444;
-        day += .00069444;
-    }
+                 s.setVy(vf(gravmer / 1.496e+11 * sin( M_PI - phi) * sin(theta + M_PI) * 7464960000, s.getY(), s.getVy(), .00069444));
+                s.setVz(vf(gravmer / 1.496e+11 * cos(M_PI - phi) * 7464960000, s.getZ(), s.getVz(), .00069444));
+            }
+            
+           /*
+                  phi = acos((s.getZ() - planets[0].getZ()) / dist(s, planets[0]) );
+                 theta = asin((s.getY() - planets[0].getY()) / dist(s, planets[0]));
+                double gravmer = 6.67e-11 * 3.302e23 / pow(dist(s, planets[0]) * 1.496e+11, 2) ;
+              s.setVx(vf(gravmer / 1.496e+11 * sin( M_PI - phi) * cos(theta + M_PI) * 7464960000, s.getX(), s.getVx(), .00069444));
+                 s.setVy(vf(gravmer / 1.496e+11 * sin( M_PI - phi) * sin(theta + M_PI) * 7464960000, s.getY(), s.getVy(), .00069444));
+                s.setVz(vf(gravmer / 1.496e+11 * cos(M_PI - phi) * 7464960000, s.getZ(), s.getVz(), .00069444));
+            */
+                time += .00069444;
+                day += .00069444;
+        }
     out.close();
     return -1;
 }
 int main(){
-  int time = 2458730.5;
+  double time = 2458730.5;
 //int main(int argc, char* argv[]) {}
     //#pragma omp parallel{
     //MPI_Init(NULL, NULL);
@@ -473,6 +497,11 @@ int main(){
     // theta 5.078903265
     // theta 6.126100816
     //for()
+    double temp;
+    double theta = 3.787359619;
+    double phi = M_PI /2;
+    solarsystem(icarus, theta, phi , i, time, temp);
+    /*
     double mintt;
     double minta;
     double mintp;
@@ -501,4 +530,5 @@ int main(){
     //MPI_Finalize();
     cout << mint << " " << mintt << " " << minta << " " << " " << mintp;
         return 0;
+        */
 }
