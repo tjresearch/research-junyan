@@ -599,9 +599,9 @@ int solarsystemp(Spacecraft &s, double &a1, double &a2, int &p, double &t)
                 */
                // cout << a1 << " " << a2 << ": " << s.getRow() << " " << s.getTheta() << " " << s.getPhi() << "\n";
               
-                out << s.getX() << "\n";
+                out << s.getX() << " ";
                  out << s.getY() <<  "\n";
-                 outp << planets[n].getX() << "\n";
+                 outp << planets[n].getX() << " ";
                  outp << planets[n].getY() << "\n";
                     }
             }
@@ -639,6 +639,7 @@ int solarsystemp(Spacecraft &s, double &a1, double &a2, int &p, double &t)
 }
 int main(){
   double time = 2458730.5;
+  
 //int main(int argc, char* argv[]) {}
     //#pragma omp parallel{
     //MPI_Init(NULL, NULL);
@@ -657,6 +658,13 @@ int main(){
     */
     Spacecraft icarus;
     int i = 0;
+     cout << "Where are you starting in our solar system? The planets are numbered (0 as Mercury, 1 as Venus...). " << "\n";
+     cin >> i;
+     int d = 0;
+     cout << "What is your planetary destination?" << "\n";
+     cin >> d;
+     cout << "what is the latest julian date you can start your journey there?" << "\n";
+     cin >> time;
     //theta 3.70178 phi 1.53649
     //theta 0 phi 0.05235987756
     //theta  2.19911  phi 1.2217
@@ -683,7 +691,7 @@ int main(){
             //if(solarsystem(icarus, theta, phi, i) != -1)
                 cout << time << " " << theta << " " << phi << ": " << solarsystem(icarus, theta, phi, i, t, temp) << "\n";
             //if(solarsystem(icarus, theta, phi, i) != i && solarsystem(icarus, theta, phi, i) != 100){
-            if(solarsystem(icarus, theta, phi, i, t, temp) != i){
+            if(solarsystem(icarus, theta, phi, i, t, temp) != d){
             if(temp < mint){
                 mint = temp;
                 mintt = t;
@@ -698,6 +706,7 @@ int main(){
     }
     //}
     //MPI_Finalize();
+    cout << "here are your best conditions to travel: " << "\n";
     cout << mint << " " << mintt << " " << minta << " " << " " << mintp;
     solarsystemp(icarus, minta, mintp, i, mintt);
         return 0;
