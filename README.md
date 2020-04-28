@@ -13,4 +13,4 @@ Libraries needed to run my program include:
 To install this program, simply paste the source code into any environment with a C++ compiler. Then compile and run it with whatever
 tools are given. Instructions detailing inputs required will be in the command line and that's where inputs should be entered.
 
-When running the program, columns of data will appear in whatever I/O menu your environment has.
+When running the program, columns of data will appear in whatever I/O menu your environment has. In addition, the program will generate a file of the travel path of the spacecraft in xyz coordinates in astronomical units titled spacecraft.txt .
