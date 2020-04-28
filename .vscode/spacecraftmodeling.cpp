@@ -687,8 +687,8 @@ int main(){
     double mintp;
     double mint = 3460; //time it took new horizons to reach pluto in days
     for(double t = juliandate; t < time; t++){
-    for(double theta = 3.787359619; theta < 3.787359619 + 1e-10; theta+= M_PI / 180){
-        for(double phi = M_PI /2 ; phi < M_PI / 2 + 1e-10; phi+= M_PI / 180){
+    for(double theta = 0; theta < 2 * M_PI; theta+= M_PI / 1800){
+        for(double phi = 0; phi < M_PI; phi+= M_PI / 1800){
             double temp;
             //if(solarsystem(icarus, theta, phi, i) != -1)
                 cout << time << " " << theta << " " << phi << ": " << solarsystem(icarus, theta, phi, i, t, temp) << "\n";
@@ -709,7 +709,7 @@ int main(){
     //}
     //MPI_Finalize();
     cout << "here are your best conditions to travel: " << "\n";
-    cout << mint << " " << mintt << " " << minta << " " << " " << mintp;
+    cout << mintt << "(julian date) " << minta << "(theta in degrees) " << mintp << "(phi in degrees)";
     solarsystemp(icarus, minta, mintp, i, mintt);
         return 0;
         
